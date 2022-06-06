@@ -4,18 +4,18 @@
 <body>
   <%- include("./partials/nav.ejs") %>
 
-  <div class="blogs content">
-    <h2>All Blogs</h2>
+  <div class="books content">
+    <h2>All Books</h2>
 
-    <% if (blogs.length > 0) { %>
-      <% blogs.forEach(blog => { %>
-        <a class="single" href="/blogs/<%= blog._id %>">
-          <h3 class="title"><%= blog.title %></h3>
-          <p class="snippet"><%= blog.snippet %></p>
+    <% if (books.length > 0) { %>
+      <% books.forEach(book => { %>
+        <a class="single" href="/books/<%= book._id %>">
+          <h3 class="title"><%= book.title %></h3>
+          <p class="snippet"><%= book.snippet %></p>
         </a>
       <% }) %>
     <% } else { %>
-      <p>There are no blogs to display...</p>
+      <p>There are no books to display...</p>
     <% } %>
     
   </div>

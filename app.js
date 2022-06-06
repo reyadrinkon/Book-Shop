@@ -1,8 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const blogRoutes = require('./routes/blogRoutes');
-const Blog=require('./models/blog')
+const bookRoutes = require('./routes/bookRoutes');
+const Book=require('./models/book')
 
 // express app
 const app = express();
@@ -29,16 +29,16 @@ app.use((req, res, next) => {
 
 // routes
 app.get('/', (req, res) => {
-  res.redirect('/blogs');
+  res.redirect('/books');
 });
 app.post('/', (req, res) => {
-  const blog= new Blog({
+  const book= new Book({
     title:'book1',
     snippet:'hsdjfkjdh',
     body:'sdhjksh'
 
   })
-  blog.save()
+  book.save()
     .then((result)=>{
       res.send(result)
     })
@@ -50,8 +50,8 @@ app.get('/about', (req, res) => {
   res.render('about', { title: 'About' });
 });
 
-// blog routes
-app.use('/blogs', blogRoutes);
+// book routes
+app.use('/books', bookRoutes);
 
 // 404 page
 app.use((req, res) => {

@@ -63,7 +63,6 @@ app.post('/createaccount', (req, res) => {
   })
   bank.save()
     .then((result)=>{
-      console.log(req.body)
       res.send(result)
     })
     .catch((err)=>{

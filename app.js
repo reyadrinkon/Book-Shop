@@ -2,12 +2,13 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const blogRoutes = require('./routes/blogRoutes');
+const Blog=require('./models/blog')
 
 // express app
 const app = express();
 
 // connect to mongodb & listen for requests
-const dbURI = "mongodb+srv://rinkon:rinkon123@cluster0.vwseqcq.mongodb.net/?retryWrites=true&w=majority";
+const dbURI = "mongodb+srv://rinkon:rinkon123@cluster0.vwseqcq.mongodb.net/book-shop?retryWrites=true&w=majority";
 
 
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -31,8 +32,19 @@ app.get('/', (req, res) => {
   res.redirect('/blogs');
 });
 app.post('/', (req, res) => {
-  console.log(req)
-  res.send("POST Request Called")
+  const blog= new Blog({
+    title:'book1',
+    snippet:'hsdjfkjdh',
+    body:'sdhjksh'
+
+  })
+  blog.save()
+    .then((result)=>{
+      res.send(result)
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
 })
 app.get('/about', (req, res) => {
   res.render('about', { title: 'About' });

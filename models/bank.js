@@ -1,24 +1,20 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const bookSchema = new Schema({
-  title: {
+const bankSchema = new Schema({
+  ac_holder: {
     type: String,
     required: true,
   },
-  Author: {
+  ac_id: {
     type: String,
     required: true,
   },
-  quantity_available: {
-    type: Number,
-    required: true
-  },
-  price: {
+  balance: {
     type: Number,
     required: true
   },
 }, { timestamps: true });
 
-const Book = mongoose.model('Book', bookSchema);
-module.exports = Book;
+const Bank = mongoose.model('Bank', bankSchema);
+module.exports = Bank;

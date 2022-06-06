@@ -2,7 +2,11 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bookRoutes = require('./routes/bookRoutes');
+const bankRoutes = require('./routes/bankRoutes');
+
 const Book=require('./models/book')
+const Bank=require('./models/bank')
+
 
 // express app
 const app = express();
@@ -33,9 +37,10 @@ app.get('/', (req, res) => {
 });
 app.post('/', (req, res) => {
   const book= new Book({
-    title:'book1',
-    snippet:'hsdjfkjdh',
-    body:'sdhjksh'
+    title:'book2',
+    Author:'rinkon',
+    quantity_available: 50,
+    price:23
 
   })
   book.save()
@@ -46,12 +51,34 @@ app.post('/', (req, res) => {
       console.log(err)
     })
 })
+app.get('/createaccount', (req, res) => {
+  res.redirect('/banks');
+});
+app.post('/createaccount', (req, res) => {
+  const bank= new Bank({
+    ac_holder:'rinkon',
+    ac_id:'123',
+    balance:50
+
+  })
+  bank.save()
+    .then((result)=>{
+      console.log(req.body)
+      res.send(result)
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
+})
+
 app.get('/about', (req, res) => {
   res.render('about', { title: 'About' });
 });
 
 // book routes
 app.use('/books', bookRoutes);
+app.use('/banks', bankRoutes);
+
 
 // 404 page
 app.use((req, res) => {

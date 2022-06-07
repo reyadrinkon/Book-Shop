@@ -52,7 +52,7 @@ app.post('/', (req, res) => {
 
   const book= new Book({
     title:req.body.title,
-    Author:req.body.Author,
+    Vendor:req.body.Vendor,
     quantity_available:req.body.quantity_available,
     price:req.body.price
 
@@ -86,6 +86,50 @@ app.post('/createaccount', (req, res) => {
     .catch((err)=>{
       console.log(err)
     })
+})
+
+app.post('/buybooks', (req, res) => {
+
+  const mongo = require('mongodb');
+
+  const MongoClient = mongo.MongoClient;
+  
+  const url = "mongodb+srv://rinkon:rinkon123@cluster0.vwseqcq.mongodb.net/book-shop?retryWrites=true&w=majority";
+  MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
+  
+      if (err) throw err;
+  
+      const db = client.db("book-shop");
+  
+      db.collection('books').updateOne({title:req.body.title},{$inc:{quantity_available:-1*req.body.quantity}})
+      db.collection('books').find({title:req.body.title}).toArray().then((docs) => {
+  
+          console.log(docs);
+  
+      }).catch((err) => {
+  
+          console.log(err);
+      }).finally(() => {
+  
+          client.close();
+      });
+  });
+  res.send("Done")
+
+
+  // const bank= new Bank({
+  //   ac_holder:req.body.ac_holder,
+  //   ac_id:req.body.ac_id,
+  //   balance:req.body.balance
+
+  // })
+  // bank.save()
+  //   .then((result)=>{
+  //     res.send(result)
+  //   })
+  //   .catch((err)=>{
+  //     console.log(err)
+  //   })
 })
 
 app.get('/about', (req, res) => {

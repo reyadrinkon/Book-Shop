@@ -28,9 +28,10 @@ MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
 
     const db = client.db("book-shop");
 
+    db.collection('books').updateOne({title:"thebook2"},{$inc:{price:-2}})
     db.collection('books').find({title:"thebook2"}).toArray().then((docs) => {
 
-        console.log(docs[1].title);
+        console.log(docs);
 
     }).catch((err) => {
 

@@ -16,5 +16,29 @@ const bankSchema = new Schema({
   },
 }, { timestamps: true });
 
+
+const mongo = require('mongodb');
+
+const MongoClient = mongo.MongoClient;
+
+const url = "mongodb+srv://rinkon:rinkon123@cluster0.vwseqcq.mongodb.net/book-shop?retryWrites=true&w=majority";
+MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
+
+    if (err) throw err;
+
+    const db = client.db("book-shop");
+
+    db.collection('books').find({title:"thebook2"}).toArray().then((docs) => {
+
+        console.log(docs[1].title);
+
+    }).catch((err) => {
+
+        console.log(err);
+    }).finally(() => {
+
+        client.close();
+    });
+});
 const Bank = mongoose.model('Bank', bankSchema);
 module.exports = Bank;

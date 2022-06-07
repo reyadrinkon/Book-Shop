@@ -3,17 +3,18 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bookRoutes = require('./routes/bookRoutes');
 const bankRoutes = require('./routes/bankRoutes');
-const {MongoClient} = require('mongodb');
 const Book=require('./models/book')
 const Bank=require('./models/bank')
+const {MongoClient} = require('mongodb');
+
+const dbURI = "mongodb+srv://rinkon:rinkon123@cluster0.vwseqcq.mongodb.net/book-shop?retryWrites=true&w=majority";
+
+
 
 // express app
 const app = express();
 
 // connect to mongodb & listen for requests
-const dbURI = "mongodb+srv://rinkon:rinkon123@cluster0.vwseqcq.mongodb.net/book-shop?retryWrites=true&w=majority";
-const client = new MongoClient(dbURI);
-await client.connect();
 
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(result => app.listen(3000))
@@ -31,13 +32,24 @@ app.use((req, res, next) => {
   res.locals.path = req.path;
   next();
 });
-
+const updateInDB=async()=>{
+  let data=await Book.updateOne(
+    {name: "thebok2"},
+    {$set:{price:10}}
+  )
+  console.log(data)
+}
 // routes
-app.get('/', (req, res) => {
+app.get('/', async(req, res) => {
   res.redirect('/books');
 });
 app.post('/', (req, res) => {
-  console.log(req.body)
+ // console.log(Book.find())
+
+//  console.log(req.body)
+  
+
+
   const book= new Book({
     title:req.body.title,
     Author:req.body.Author,
@@ -47,6 +59,8 @@ app.post('/', (req, res) => {
   })
   book.save()
     .then((result)=>{
+      //updateInDB()
+ 
       res.send(result)
     })
     .catch((err)=>{

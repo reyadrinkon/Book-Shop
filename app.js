@@ -71,8 +71,7 @@ app.get('/createaccount', (req, res) => {
   res.redirect('/banks');
 });
 app.post('/createaccount', (req, res) => {
-  const x=Bank.find()
-  console.log(db.Bank)
+
   const bank= new Bank({
     ac_holder:req.body.ac_holder,
     ac_id:req.body.ac_id,
@@ -100,8 +99,17 @@ app.post('/buybooks', (req, res) => {
       if (err) throw err;
   
       const db = client.db("book-shop");
+      // if (quantity_available < req.body.quantity){
+      //   res.end("Not enough books")
+      // }
+      const pprice =db.collection('books').find({title:req.body.title}).price
+      console.log(pprice)
+
+
   
       db.collection('books').updateOne({title:req.body.title},{$inc:{quantity_available:-1*req.body.quantity}})
+      db.collection('banks').updateOne({acc_holder:req.body.acc_holder},{$inc:{balance:+req.body.quantity*pprice}})
+
       db.collection('books').find({title:req.body.title}).toArray().then((docs) => {
   
           console.log(docs);

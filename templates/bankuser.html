@@ -1,0 +1,28 @@
+{% extends "heading.html" %} {% block content %}
+
+<div class="row"><h2>Add Bank Account Information</h2></div>
+It looks like you havent added your bank account Information in this website.
+<h3>Please add your bank account information</h3>
+<div class="row">
+  <div class="col-md-4">
+    
+    <div class="card card-body">
+      <form action="{{url_for('add_bankuser')}}" method="POST">
+        <div class="form-group">
+          <input type="text" class="form-control" name="ID" placeholder="Account Number">
+        </div>
+        
+        <div class="form-group">
+          <input type="text" class="form-control" name="name" placeholder="name">
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control" name="secret" placeholder="secret">
+        </div>
+
+        <button class="btn btn-primary btn-block">
+          Update info
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endblock %}

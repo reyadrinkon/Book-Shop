@@ -163,10 +163,23 @@ def adminHome():
 
 
 # -------------------------> User Homepage
-@app.route('/buying', methods=['GET', 'POST'])
-def buying():
+@app.route('/buying/<name>', methods=['GET', 'POST'])
+def buying(name):
+    buyer=session['username']
+    print(buyer)
+    buyer_account=Bankuser.query.filter_by(username = buyer).all()
+    book_to_buy=ProductsInfo.query.filter_by(name = name).all()
+    print(buyer_account[0].balance)
+    print(book_to_buy[0].price)
+    if request.method == 'POST':
+        amount=request.form.get('select1')
+    print(amount)
+    if (int(buyer_account[0].balance)> (int(amount)*int(book_to_buy[0].price))):
+        print("YES")
+    else:
+        print("No")
     
-    return render_template('buying.html')
+    return render_template('buying.html',name=name,amount=amount,buyer=buyer)
 @app.route('/bank', methods=['GET', 'POST'])
 def bank():
     return render_template('bank.html')

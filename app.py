@@ -443,6 +443,16 @@ def add_bankuser():
         db.session.add(new_bank_user)
         db.session.commit()
         return render_template('home.html')
+    
+@app.route('/checkbalance',methods=['GET', 'POST'])
+def checkbalance():
+
+    return render_template('check.html')
+
+@app.route('/check_account',methods=['GET', 'POST'])
+def check_account():
+
+    return render_template('check.html')
 
 def getApp():
     return app

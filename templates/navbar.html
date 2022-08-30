@@ -17,7 +17,7 @@
                 {% if session['logged_in'] %}
 
                 <a class="nav-link text-success">Hi {{ session['username']|title }}</a>
-                <a href="{{ url_for('login')}}"><button type="button" class="btn btn-outline-success">CheckBalance</button></a>
+                <a href="{{ url_for('checkbalance')}}"><button type="button" class="btn btn-outline-success">CheckBalance</button></a>
 
                 {% else %}
                 

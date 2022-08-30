@@ -1,3 +1,5 @@
+import code
+from itertools import product
 import os
 from os import path
 import secrets
@@ -51,7 +53,6 @@ class ProductsInfo(db.Model, UserMixin):
 
     def __repr__(self):
         return f'<Task : {self.id}>'
-
 
 
 
@@ -176,13 +177,26 @@ def buying(name):
     print(amount)
     if (int(buyer_account[0].balance)> (int(amount)*int(book_to_buy[0].price))):
         print("YES")
+        print(session)
+        product=book_to_buy[0].id
+        amount=int(amount)
+        return redirect(url_for('bank', product=product,amount=amount))
     else:
-        print("No")
+        return render_template("no_balance.html")
     
-    return render_template('buying.html',name=name,amount=amount,buyer=buyer)
 @app.route('/bank', methods=['GET', 'POST'])
 def bank():
-    return render_template('bank.html')
+    product1=request.args.get('product')
+    amount1=request.args.get('amount')
+    print(product1)
+    print((amount1))
+
+
+    # buyer_account=Bankuser.query.filter_by(username = user).all()
+    # book_to_buy=ProductsInfo.query.filter_by(name = keys['product']).all()
+    # if (int(buyer_account[0].balance)> (int(keys['amount'])*int(book_to_buy[0].price))):
+    return render_template('seller.html')
+        
 
 @app.route('/seller')
 def seller():

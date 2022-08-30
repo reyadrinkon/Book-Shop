@@ -55,6 +55,11 @@ class ProductsInfo(db.Model, UserMixin):
         return f'<Task : {self.id}>'
 
 
+class Transaction(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    sender = db.Column(db.String(20), nullable=False, unique=True)
+    receiver = db.Column(db.String(80), nullable=False)
+    amount = db.Column(db.Integer, nullable=False, unique=True)
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -69,10 +74,7 @@ class Bankuser(db.Model, UserMixin):
     secret = db.Column(db.String(20), nullable=False, unique=True)
     balance=db.Column(db.Integer,nullable=False)
 
-class Seller(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), nullable=False, unique=True)
-    balance=db.Column(db.Integer,nullable=False)
+
 
 class RegsiterForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(
@@ -135,13 +137,13 @@ def adminHome():
                 seller=request.form['productSeller'],
                 imageName=image.filename
             )
-            new_seller=Seller(
-                id=34,
-                username=request.form['productSeller'],
-                balance=1000
-            )
-            db.session.add(new_seller)
-            db.session.commit()
+            # new_seller=Seller(
+            #     id=34,
+            #     username=request.form['productSeller'],
+            #     balance=1000
+            # )
+            # db.session.add(new_seller)
+            # db.session.commit()
             try:
                 session['productName'] = request.form['productName']
                 db.session.add(newItem)
@@ -205,6 +207,29 @@ def seller():
 def home():
     if not path.exists("database.db"):
         db.create_all()
+        new_seller=Bankuser(
+            id=11,
+            username='seller1',
+            secret='abcd1',
+            balance=1000
+        )
+        new_seller2=Bankuser(
+            id=12,
+            username='seller2',
+            secret='abcd2',
+            balance=1000
+        )
+        new_seller3=Bankuser(
+            id=13,
+            username='seller3',
+            secret='abcd3',
+            balance=1000
+        )
+        db.session.add(new_seller)
+        db.session.add(new_seller2)
+        db.session.add(new_seller3)
+        db.session.commit()
+        
         
     allProducts = []
     # Adding a username in session with value if doesn't exists any.
@@ -218,7 +243,7 @@ def home():
         pass
     if 'username' in session:
         # print(Bankuser.query.get(5))
-        if (len(Bankuser.query.filter_by(username = session['username']).all()))==0 and session['username']!='None':
+        if (len(Bankuser.query.filter_by(username = session['username']).all()))==0 and session['username']!='admin':
             return render_template('/bankuser.html')
         # resp=Bankuser.query.all()
         # print(resp[0].username)
@@ -234,15 +259,7 @@ def login():
     if 'username' not in session:
         session['username'] = 'None'
         session['logged_in'] = False
-        # new_bank_user=Bankuser(
-        # id=6,
-        # username="ananya",
-        # secret='abcd'
-  
-        
-        # )
-        # db.session.add(new_bank_user)   
-        # db.session.commit()
+
 
     form = LoginForm()
     # For admin

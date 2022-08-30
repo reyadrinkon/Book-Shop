@@ -1,84 +1,85 @@
 {% extends "heading.html" %}
 {% block content %}
 <link rel="icon" property="icon" href="https://cdn-icons-png.flaticon.com/512/282/282100.png" type="image/x-icon" />
-<link rel="stylesheet" property="stylesheet"
-  href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+<!-- <link rel="stylesheet" property="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" /> -->
 <div class="container">
-  <h1 style="text-align:center;" class="my-2">{{ productDetails.name }}</h1>
-  <div class="row">
+    <h1 style="text-align:center;" class="my-2">{{ productDetails.name }}</h1>
     <div class="row">
-      <div class="col-lg-6">
-        <div id="itemImage"></div>
-        <img  class="card-img-top img-fluid mt-4 ml-4" src="/static/images/{{productDetails.imageName}}" alt="" style="
+        <div class="row">
+            <div class="col-lg-6">
+                <div id="itemImage"></div>
+                <img class="card-img-top img-fluid mt-4 ml-4" src="/static/images/{{productDetails.imageName}}" alt=""
+                    style="
               width: 300px;
               height: 390px;
               margin-left: auto;
               margin-right: auto;
               border-radius: 25px;
             " />
-      </div>
+            </div>
 
-      <div class="col-lg-6">
-        <div class="card card-outline-secondary my-4">
-          <div class="card-header">
-            <h2>Book Details</h2>
-          </div>
-          <div class="card-body">
-            <h4 class="card-title">Author</h4>
-            <p class="card-text">{{ productDetails.author }}</p>
-            <h4 class="card-title">Description</h4>
-            <p class="card-text">{{ productDetails.description }}</p>
-            <h4 class="card-title">Price</h4>
-            <p class="card-text"><strong>{{ productDetails.price }}</strong></p>
-            <h5>Amount</h5>
-            <!-- Change the `data-field` of buttons and `name` of input field's for multiple plus minus buttons-->
-            <form method="POST" action="/buying/{{productDetails.name}}">
+            <div class="col-lg-6">
+                <div class="card card-outline-secondary my-4">
+                    <div class="card-header">
+                        <h2>Book Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Author</h4>
+                        <p class="card-text">{{ productDetails.author }}</p>
+                        <h4 class="card-title">Description</h4>
+                        <p class="card-text">{{ productDetails.description }}</p>
+                        <h4 class="card-title">Price</h4>
+                        <p class="card-text"><strong>{{ productDetails.price }}</strong></p>
+                        <h5>Amount</h5>
+                        <!-- Change the `data-field` of buttons and `name` of input field's for multiple plus minus buttons-->
+                        <form method="POST" action="/buying/{{productDetails.name}}">
 
-              <div class="form-group">
-                <select name="select1">
-                <option value="">--Please choose Amount--</option>
-    
-                <option value=1>1</option>
-                <option value=2>2</option>
-                <option value=3>3</option>
-                <option value=4>4</option>
-                <option value=5>5</option>
-                <option value=6>6</option>
-                <option value=7>7</option>
-                <option value=8>8</option>
+                            <div class="form-group">
+                                <select name="select1">
+                                    <option value="">--Please choose Amount--</option>
 
-
-
-        
-                </select>
-              </div>
+                                    <option value=1>1</option>
+                                    <option value=2>2</option>
+                                    <option value=3>3</option>
+                                    <option value=4>4</option>
+                                    <option value=5>5</option>
+                                    <option value=6>6</option>
+                                    <option value=7>7</option>
+                                    <option value=8>8</option>
 
 
-           
-            <div class="mb-3">
-              <input class="btn btn-primary" type="submit" value="Buy Now" name="imageName" />
-          </div>
-        </form>
-            
-          </div>
+
+
+                                </select>
+                            </div>
+
+
+
+                            <div class="my-3">
+                                <input class="btn btn-success" type="submit" value="Buy Now" name="imageName" />
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 <script>
-  var counter = 0;
-  function myFunction() {
-    if (counter == 0) {
-      document.getElementById("buy-button").innerHTML = "Download Now";
-      document.getElementById("buy-button").className = "btn btn-success";
-      counter += 1
+    var counter = 0;
+    function myFunction() {
+        if (counter == 0) {
+            document.getElementById("buy-button").innerHTML = "Download Now";
+            document.getElementById("buy-button").className = "btn btn-success";
+            counter += 1
+        }
+        else {
+            document.getElementById("download-now").setAttribute("href", "{{ productDetails.link }}");
+            document.getElementById("download-now").setAttribute("target", "_blank");
+            swal("Thanks for Buying!", "Visit again!", "success");
+        }
     }
-    else {
-      document.getElementById("download-now").setAttribute("href", "{{ productDetails.link }}");
-      document.getElementById("download-now").setAttribute("target", "_blank");
-      swal("Thanks for Buying!", "Visit again!", "success");
-    }
-  }
 </script>
 {% endblock %}

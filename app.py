@@ -280,7 +280,14 @@ def home():
         print(i.sender)
         print(i.receiver)
         print(i.amount)
-    
+    print("--------------------------------")
+    z= Bankuser.query.all()
+    for i in z:
+        print(i.id)
+        print(i.username)
+        print(i.secret)
+
+
     
     if not path.exists("database.db"):
         db.create_all()
@@ -447,12 +454,26 @@ def add_bankuser():
 @app.route('/checkbalance',methods=['GET', 'POST'])
 def checkbalance():
 
+
+
     return render_template('check.html')
 
 @app.route('/check_account',methods=['GET', 'POST'])
 def check_account():
+    if request.method == 'POST':
+        id = request.form['ID']
+        secret = request.form['secret']
+        user=Bankuser.query.get_or_404(id)
+    if secret==user.secret:
+        balance=user.balance
+        holder=user.username
+    else:
+        flash(f'Keys Didnt Match!', 'danger')
+        return redirect('/checkbalance')
+        
 
-    return render_template('check.html')
+
+    return render_template('balance.html',balance=balance,id=id,holder=holder)
 
 def getApp():
     return app

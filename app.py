@@ -253,6 +253,7 @@ def seller():
     ecommerce=Bankuser.query.get_or_404(100)
     amount=int(transaction.amount)
     # print(amount)
+    id_1=transaction.id
     old_balance_ecommerce=ecommerce.balance
     ecommerce.balance=old_balance_ecommerce-amount
     sellerid=seller[0].id
@@ -262,7 +263,7 @@ def seller():
     db.session.commit()
     
     
-    return render_template('bank.html')
+    return render_template('ok.html',id=id_1)
 
 
 @app.route('/',methods=['POST', 'GET'])
@@ -373,7 +374,7 @@ def login():
                     return redirect(url_for('login'))
             else:
                 flash(f'Your credentials did not match. Please try again', 'danger')
-                return redirect(url_for('login'))
+                # return redirect(url_for('login'))
         return render_template('login.html', form=form)
 
 

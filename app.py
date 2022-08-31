@@ -1,3 +1,5 @@
+import code
+from itertools import product
 import os
 from os import path
 import secrets
@@ -11,6 +13,8 @@ from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 from werkzeug.utils import secure_filename
+import random
+import string
 
 
 UPLOAD_FOLDER = 'static/images/'
@@ -53,7 +57,11 @@ class ProductsInfo(db.Model, UserMixin):
         return f'<Task : {self.id}>'
 
 
-
+class Transaction(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    sender = db.Column(db.String(20), nullable=False,)
+    receiver = db.Column(db.String(80))
+    amount = db.Column(db.Integer)
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -68,10 +76,7 @@ class Bankuser(db.Model, UserMixin):
     secret = db.Column(db.String(20), nullable=False, unique=True)
     balance=db.Column(db.Integer,nullable=False)
 
-class Seller(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), nullable=False, unique=True)
-    balance=db.Column(db.Integer,nullable=False)
+
 
 class RegsiterForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(
@@ -134,13 +139,13 @@ def adminHome():
                 seller=request.form['productSeller'],
                 imageName=image.filename
             )
-            new_seller=Seller(
-                id=34,
-                username=request.form['productSeller'],
-                balance=1000
-            )
-            db.session.add(new_seller)
-            db.session.commit()
+            # new_seller=Seller(
+            #     id=34,
+            #     username=request.form['productSeller'],
+            #     balance=1000
+            # )
+            # db.session.add(new_seller)
+            # db.session.commit()
             try:
                 session['productName'] = request.form['productName']
                 db.session.add(newItem)
@@ -165,6 +170,7 @@ def adminHome():
 # -------------------------> User Homepage
 @app.route('/buying/<name>', methods=['GET', 'POST'])
 def buying(name):
+    print(session['username'])
     buyer=session['username']
     print(buyer)
     buyer_account=Bankuser.query.filter_by(username = buyer).all()
@@ -176,23 +182,142 @@ def buying(name):
     print(amount)
     if (int(buyer_account[0].balance)> (int(amount)*int(book_to_buy[0].price))):
         print("YES")
-    else:
-        print("No")
+        print(session)
+        product=book_to_buy[0].id
+        amount=int(amount)
     
-    return render_template('buying.html',name=name,amount=amount,buyer=buyer)
+        seller=book_to_buy[0].seller
+        return redirect(url_for('bank', product=product,amount=amount,seller=seller,buyer=buyer))
+    else:
+        return render_template("no_balance.html")
+    
 @app.route('/bank', methods=['GET', 'POST'])
 def bank():
-    return render_template('bank.html')
+    # x=Bankuser.query.all()
+    # for i in x:
+    #     print(i.id)
+    #     print(i.username)
+    #     print(i.balance)
+    product=request.args.get('product')
+    amount=request.args.get('amount')
+    seller=request.args.get('seller')
+    buyer=request.args.get('buyer')
+    book_to_buy=ProductsInfo.query.filter_by(id = int(product)).all()
+    buyer_account=Bankuser.query.filter_by(username = buyer).all()
+    print(book_to_buy[0])
+    print(buyer_account[0])
+
+    now_balance_buyer=buyer_account[0].balance
+    id=buyer_account[0].id
+    account_update=Bankuser.query.get_or_404(id)
+    account_update.balance=int(now_balance_buyer)-(int(amount)*int(book_to_buy[0].price))
+
+    reduce_balance_buyer=int(now_balance_buyer)-(int(amount)*int(book_to_buy[0].price))
+    book_to_buy[0].balance=reduce_balance_buyer
+    print(reduce_balance_buyer)
+    db.session.commit()
+    ecommerce=Bankuser.query.get_or_404(100)
+    prev=ecommerce.balance
+    ecommerce.balance=int(prev)+(int(amount)*int(book_to_buy[0].price))
+    db.session.commit()
+
+    
+    letters = string.digits
+    x=int(''.join(random.choice(letters) for i in range(5)))
+    new_transaction=Transaction(
+        id=x,
+        sender=buyer,
+        receiver='bank',
+        amount=(int(amount)*int(book_to_buy[0].price))
+    ) 
+    db.session.add(new_transaction)
+    db.session.commit()
+    
+    
+
+
+
+
+    
+    return  redirect(url_for('seller',x=x,seller=seller))
+        
 
 @app.route('/seller')
 def seller():
-    return render_template('seller.html')
+    transaction_id=int(request.args.get('x'))
+    sell=request.args.get('seller')
+    seller=Bankuser.query.filter_by(username = sell).all()
+    print(seller[0])
+    print(sell)
+    transaction=Transaction.query.get_or_404(transaction_id)
+    ecommerce=Bankuser.query.get_or_404(100)
+    amount=int(transaction.amount)
+    # print(amount)
+    id_1=transaction.id
+    old_balance_ecommerce=ecommerce.balance
+    ecommerce.balance=old_balance_ecommerce-amount
+    sellerid=seller[0].id
+    seller1=Bankuser.query.get_or_404(sellerid)
+    old_balance_seller=seller1.balance
+    seller1.balance=old_balance_seller+amount
+    db.session.commit()
+    
+    
+    return render_template('ok.html',id=id_1)
+
+
 @app.route('/',methods=['POST', 'GET'])
 def home():
+    y=Bankuser.query.all()
+    print(y)
+    for i in y:
+        print(i.id)
+        print(i.username)
+        print(i.balance)
+    x=Transaction.query.all()
+    print("--------------------------------")
+    for i in x:
+        print(i.id)
+        print(i.sender)
+        print(i.receiver)
+        print(i.amount)
+    print("--------------------------------")
+    z= Bankuser.query.all()
+    for i in z:
+        print(i.id)
+        print(i.username)
+        print(i.secret)
+
+
+    
     if not path.exists("database.db"):
         db.create_all()
+        new_seller=Bankuser(
+            id=11,
+            username='seller1',
+            secret='abcd1',
+            balance=1000
+        )
+        new_seller2=Bankuser(
+            id=12,
+            username='seller2',
+            secret='abcd2',
+            balance=1000
+        )
+        new_seller3=Bankuser(
+            id=13,
+            username='seller3',
+            secret='abcd3',
+            balance=1000
+        )
+        db.session.add(new_seller)
+        db.session.add(new_seller2)
+        db.session.add(new_seller3)
+        db.session.commit()
+        
         
     allProducts = []
+    # print(session)
     # Adding a username in session with value if doesn't exists any.
     if 'username' not in session:
         session['username'] = 'None'
@@ -220,15 +345,7 @@ def login():
     if 'username' not in session:
         session['username'] = 'None'
         session['logged_in'] = False
-        # new_bank_user=Bankuser(
-        # id=6,
-        # username="ananya",
-        # secret='abcd'
-  
-        
-        # )
-        # db.session.add(new_bank_user)   
-        # db.session.commit()
+
 
     form = LoginForm()
     # For admin
@@ -257,7 +374,7 @@ def login():
                     return redirect(url_for('login'))
             else:
                 flash(f'Your credentials did not match. Please try again', 'danger')
-                return redirect(url_for('login'))
+                # return redirect(url_for('login'))
         return render_template('login.html', form=form)
 
 
@@ -334,6 +451,30 @@ def add_bankuser():
         db.session.add(new_bank_user)
         db.session.commit()
         return render_template('home.html')
+    
+@app.route('/checkbalance',methods=['GET', 'POST'])
+def checkbalance():
+
+
+
+    return render_template('check.html')
+
+@app.route('/check_account',methods=['GET', 'POST'])
+def check_account():
+    if request.method == 'POST':
+        id = request.form['ID']
+        secret = request.form['secret']
+        user=Bankuser.query.get_or_404(id)
+    if secret==user.secret:
+        balance=user.balance
+        holder=user.username
+    else:
+        flash(f'Keys Didnt Match!', 'danger')
+        return redirect('/checkbalance')
+        
+
+
+    return render_template('balance.html',balance=balance,id=id,holder=holder)
 
 def getApp():
     return app

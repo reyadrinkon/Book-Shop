@@ -9,22 +9,24 @@
         </div>
     </div>
 
-    <div class="mx-auto my-2 p-4 border border-1 border-success text-success text-center" >
-        <h3 class="my-2">Please add your bank account information</h3>
-        <div class="mx-auto text-center text-success my-2" style="width: 50%;">
-            <form action="{{url_for('add_bankuser')}}" method="POST">
-                <div class="form-group my-2">
-                    <h5>Enter your account number :</h5>
-                    <input type="text" class="form-control" name="ID" placeholder="Account Number">
-                </div>
-                <div class="form-group my-2">
-                    <h5>Enter your username: </h5>
-                    <input type="text" class="form-control" name="name" placeholder="Username">
-                </div>
-                <div class="form-group my-2">
-                    <h5>Enter secret key :</h5>
-                    <input type="text" class="form-control" name="secret" placeholder="Secret Key">
-                </div>
+<div class="row"><h2>Add Bank Account Information</h2></div>
+It looks like you havent added your bank account Information in this website.
+<h3>Please add your bank account information</h3>
+<div class="row">
+  <div class="col-md-4">
+    
+    <div class="card card-body">
+      <form action="{{url_for('add_bankuser')}}" method="POST">
+        <div class="form-group">
+          <input type="text" class="form-control" name="ID" placeholder="Account Number">
+        </div>
+        
+        <div class="form-group">
+          <input type="text" class="form-control" name="name" placeholder="name">
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control" name="secret" placeholder="secret">
+        </div>
 
                 <button class="btn btn-success btn-block my-3">
                     Update info

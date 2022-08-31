@@ -50,6 +50,7 @@ class ProductsInfo(db.Model, UserMixin):
     dateaddes = db.Column(db.DateTime, default=datetime.utcnow)
     imageName = db.Column(db.Text, nullable=True)
     seller= db.Column(db.String(200), nullable=False)
+    quantity=db.Column(db.Integer)
 
 
 
@@ -137,6 +138,7 @@ def adminHome():
                 description=request.form['productDescription'],
                 price=request.form['productPrice'],
                 seller=request.form['productSeller'],
+                quantity=int(request.form["productQuantity"]),
                 imageName=image.filename
             )
             # new_seller=Seller(
@@ -225,6 +227,12 @@ def bank():
     prev=ecommerce.balance
     ecommerce.balance=int(prev)+(int(amount)*int(book_to_buy[0].price))
     db.session.commit()
+    book_id=book_to_buy[0].id
+    bookupdate=ProductsInfo.query.get_or_404(int(book_id))
+    old=bookupdate.quantity
+    bookupdate.quantity=old-int(amount)
+    db.session.commit()
+    
 
     
     letters = string.digits
@@ -273,25 +281,25 @@ def seller():
 
 @app.route('/',methods=['POST', 'GET'])
 def home():
-    y=Bankuser.query.all()
-    print(y)
-    for i in y:
-        print(i.id)
-        print(i.username)
-        print(i.balance)
-    x=Transaction.query.all()
-    print("--------------------------------")
-    for i in x:
-        print(i.id)
-        print(i.sender)
-        print(i.receiver)
-        print(i.amount)
-    print("--------------------------------")
-    z= Bankuser.query.all()
-    for i in z:
-        print(i.id)
-        print(i.username)
-        print(i.secret)
+    # y=Bankuser.query.all()
+    # print(y)
+    # for i in y:
+    #     print(i.id)
+    #     print(i.username)
+    #     print(i.balance)
+    # x=Transaction.query.all()
+    # print("--------------------------------")
+    # for i in x:
+    #     print(i.id)
+    #     print(i.sender)
+    #     print(i.receiver)
+    #     print(i.amount)
+    # print("--------------------------------")
+    # z= Bankuser.query.all()
+    # for i in z:
+    #     print(i.id)
+    #     print(i.username)
+    #     print(i.secret)
 
 
     
@@ -429,7 +437,8 @@ def order(productid):
         try:
             productDetails = ProductsInfo.query.get_or_404(productid)
             print(productDetails.imageName)
-            return render_template('order.html', productDetails=productDetails)
+            quantity=productDetails.quantity
+            return render_template('order.html', productDetails=productDetails,quantity=quantity)
         except:
             #!!! Product not found Warning must show up
             return redirect('/')

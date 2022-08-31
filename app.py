@@ -208,6 +208,11 @@ def bank():
     print(buyer_account[0])
 
     now_balance_buyer=buyer_account[0].balance
+    if(now_balance_buyer-(int(amount)*int(book_to_buy[0].price)))<=0:
+        
+        return render_template("no_balance.html")
+    
+        
     id=buyer_account[0].id
     account_update=Bankuser.query.get_or_404(id)
     account_update.balance=int(now_balance_buyer)-(int(amount)*int(book_to_buy[0].price))
@@ -470,7 +475,7 @@ def check_account():
         holder=user.username
     else:
         flash(f'Keys Didnt Match!', 'danger')
-        return redirect('/checkbalance')
+        return ('Keys Dont Match,Please Try with another keys')
         
 
 

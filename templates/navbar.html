@@ -1,0 +1,47 @@
+{% block navbar %}
+<nav class="navbar navbar-expand-lg bg-transparent">
+    <div class="container d-flex justify-content-between align-item-center">
+        <div class="align-self-center fw-bold">
+            <a class="navbar-brand" class="nav-link " href="{{ url_for('home')}}">
+                <strong>
+                    <h1 class="text-success">E-Book Store</h1>
+                </strong>
+            </a>
+        </div>
+        <div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="container d-flex gap-2 justify-content-evenly align-item-center navbar-nav navbar-text navLogger">
+
+                    {% if session['logged_in'] %}
+
+                    <a class="nav-link text-success">Hi {{ session['username']|title }}</a>
+                    <a href="{{ url_for('checkbalance')}}"><button type="button"
+                            class="btn btn-outline-success">CheckBalance</button></a>
+
+                    {% else %}
+
+                    <a href="{{ url_for('login')}}"><button type="button"
+                            class="btn btn-outline-success">LogIn</button></a>
+                    {% endif %}
+
+                    {% if session['logged_in'] %}
+                    <a href="{{ url_for('logout')}}"><button type="button"
+                            class="btn btn-outline-success">LogOut</button></a>
+                    {% else %}
+                    <a href="{{ url_for('signup')}}"><button type="button"
+                            class="btn btn-outline-success">Register</button></a>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="text-success bg-success">
+    <hr class="border border-success border-2 shadow-lg mb-2 bg-body rounded">
+</div>
+{% endblock %}
